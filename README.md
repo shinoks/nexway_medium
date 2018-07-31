@@ -1,0 +1,1 @@
+**Medium test for NexWay**
