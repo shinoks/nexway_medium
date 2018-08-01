@@ -5,6 +5,8 @@ use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Serializer\Encoder\XmlEncoder;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\Encoder\CsvEncoder;
+use Symfony\Component\Finder\Finder;
+use Symfony\Component\Filesystem\Filesystem;
 
 class ImportPrices
 {
@@ -12,12 +14,70 @@ class ImportPrices
     {
     }
 
-    public function decoder(File $file)
+    public function import(File $file)
     {
         $extension = $file->getExtension();
         $filePath = $file->getRealPath();
-        $content = file_get_contents($filePath);
-        $parsedData = $this->fileParser($content, $extension);
+        $fileName = $file->getBasename('.'.$extension);
+        $filesystem = new Filesystem();
+
+        switch($extension){
+            case 'zip':
+                if($this->unzip($filePath, '../var/data/'.$fileName)){
+                    $parsedData = $this->getFileFromDir($file, $fileName);
+                    $filesystem->remove('../var/data/'.$fileName);
+                };
+            break;
+            case 'rar':
+                if($this->unrar($filePath, '../var/data/'.$fileName)){
+                    $parsedData = $this->getFileFromDir($file, $fileName);
+                    $filesystem->remove('../var/data/'.$fileName);
+                };
+            break;
+            default:
+                $content = file_get_contents($filePath);
+                $parsedData []= $this->fileParser($content, $extension);
+        }
+
+        return $parsedData;
+    }
+
+    private function unzip($location, $name)
+    {
+        if(exec("unzip $location -d $name",$arr)){
+
+            return true;
+        }else {
+
+            return false;
+        }
+    }
+
+    private function unrar($location, $name)
+    {
+        $filesystem = new Filesystem();
+        if(!$filesystem->exists($name)){
+            mkdir($name);
+        }
+
+        if(exec("unrar x $location $name",$arr)){
+
+            return true;
+        }else {
+
+            return false;
+        }
+    }
+
+    private function getFileFromDir(File $file, $fileName)
+    {
+        $parsedData = [];
+        $finder = new Finder();
+        $finder->files()->in($file->getPath().'/'.$fileName);
+        foreach ($finder as $file) {
+            $content = file_get_contents($file->getRealPath());
+            $parsedData []= $this->fileParser($content, $file->getExtension());
+        }
 
         return $parsedData;
     }
@@ -35,6 +95,7 @@ class ImportPrices
                 $parsed = $this->xmlDecoder($data);
             break;
             default:
+
                 return false;
         }
 
@@ -45,14 +106,6 @@ class ImportPrices
     {
         $encoder = new JsonEncoder();
         $encoded = $encoder->decode($data,[]);
-
-        return $encoded;
-    }
-
-    private function jsonEncoder($data)
-    {
-        $encoder = new JsonEncoder();
-        $encoded = $encoder->encode($data,'json');
 
         return $encoded;
     }
@@ -77,14 +130,6 @@ class ImportPrices
         }
 
         return $parse;
-    }
-
-    private function csvEncoder($data)
-    {
-        $encoder = new CsvEncoder();
-        $encoded = $encoder->encode($data,'csv');
-
-        return $encoded;
     }
 
     private function xmlDecoder($data)
