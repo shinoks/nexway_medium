@@ -10,12 +10,15 @@ use Symfony\Component\Filesystem\Filesystem;
 
 class ImportPrices
 {
-    public function __construct()
-    {
-    }
+    CONST TEMP = '../var/data/';
 
-    public function import(File $file)
+    /**
+     * @param File $file
+     * @return array
+     */
+    public function import(File $file): array
     {
+        $parsedData = [];
         $extension = $file->getExtension();
         $filePath = $file->getRealPath();
         $fileName = $file->getBasename('.'.$extension);
@@ -23,15 +26,15 @@ class ImportPrices
 
         switch($extension){
             case 'zip':
-                if($this->unzip($filePath, '../var/data/'.$fileName)){
-                    $parsedData = $this->getFileFromDir($file, $fileName);
-                    $filesystem->remove('../var/data/'.$fileName);
+                if($this->unzip($filePath, $this::TEMP.$fileName)){
+                    $parsedData = $this->getParseFilesFromDir($fileName);
+                    $filesystem->remove($this::TEMP.$fileName);
                 };
             break;
             case 'rar':
-                if($this->unrar($filePath, '../var/data/'.$fileName)){
-                    $parsedData = $this->getFileFromDir($file, $fileName);
-                    $filesystem->remove('../var/data/'.$fileName);
+                if($this->unrar($filePath, $this::TEMP.$fileName)){
+                    $parsedData = $this->getParseFilesFromDir($fileName);
+                    $filesystem->remove($this::TEMP.$fileName);
                 };
             break;
             default:
@@ -42,7 +45,12 @@ class ImportPrices
         return $parsedData;
     }
 
-    private function unzip($location, $name)
+    /**
+     * @param $location
+     * @param $name
+     * @return bool
+     */
+    private function unzip($location, $name): bool
     {
         if(exec("unzip $location -d $name",$arr)){
 
@@ -53,7 +61,12 @@ class ImportPrices
         }
     }
 
-    private function unrar($location, $name)
+    /**
+     * @param $location
+     * @param $name
+     * @return bool
+     */
+    private function unrar($location, $name): bool
     {
         $filesystem = new Filesystem();
         if(!$filesystem->exists($name)){
@@ -69,11 +82,15 @@ class ImportPrices
         }
     }
 
-    private function getFileFromDir(File $file, $fileName)
+    /**
+     * @param $fileName
+     * @return array
+     */
+    private function getParseFilesFromDir($fileName): array
     {
         $parsedData = [];
         $finder = new Finder();
-        $finder->files()->in($file->getPath().'/'.$fileName);
+        $finder->files()->in($this::TEMP.'/'.$fileName);
         foreach ($finder as $file) {
             $content = file_get_contents($file->getRealPath());
             $parsedData []= $this->fileParser($content, $file->getExtension());
@@ -82,8 +99,14 @@ class ImportPrices
         return $parsedData;
     }
 
-    private function fileParser($data, $extension)
+    /**
+     * @param $data
+     * @param $extension
+     * @return array
+     */
+    private function fileParser($data, $extension): array
     {
+        $parsed = [];
         switch($extension){
             case 'json':
                 $parsed = $this->jsonDecoder($data);
@@ -94,15 +117,16 @@ class ImportPrices
             case 'xml':
                 $parsed = $this->xmlDecoder($data);
             break;
-            default:
-
-                return false;
         }
 
         return $parsed;
     }
 
-    private function jsonDecoder($data)
+    /**
+     * @param $data
+     * @return array
+     */
+    private function jsonDecoder($data): array
     {
         $encoder = new JsonEncoder();
         $encoded = $encoder->decode($data,[]);
@@ -110,7 +134,11 @@ class ImportPrices
         return $encoded;
     }
 
-    private function csvDecoder($data)
+    /**
+     * @param $data
+     * @return array
+     */
+    private function csvDecoder($data): array
     {
         $encoder = new CsvEncoder();
         $encoded = $encoder->decode($data,[]);
@@ -132,7 +160,11 @@ class ImportPrices
         return $parse;
     }
 
-    private function xmlDecoder($data)
+    /**
+     * @param $data
+     * @return array
+     */
+    private function xmlDecoder($data): array
     {
         $encoder = new XmlEncoder();
         $encoded = $encoder->decode($data,[]);
