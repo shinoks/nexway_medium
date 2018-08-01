@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+    <Katowice>
+        <ON>4.4</ON>
+        <Pb95>4.5</Pb95>
+        <Pb98>4.8</Pb98>
+    </Katowice>
+    <Sosnowiec>
+        <ON>4.45</ON>
+        <Pb95>4.55</Pb95>
+        <Pb98>4.75</Pb98>
+    </Sosnowiec>
+</root>
+

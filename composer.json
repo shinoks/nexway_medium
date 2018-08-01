@@ -19,6 +19,7 @@
     "require-dev": {
         "symfony/dotenv": "^4.1",
         "symfony/maker-bundle": "^1.5",
+        "symfony/phpunit-bridge": "^4.1",
         "symfony/web-server-bundle": "^4.1"
     },
     "config": {
