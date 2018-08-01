@@ -5,11 +5,12 @@ class PetrolPrices
 {
     private $city;
 
-    private $pb95;
+    private $fuels;
 
-    private $pb98;
-
-    private $on;
+    public function __construct()
+    {
+        $this->fuels = [];
+    }
 
     /**
      * @return string
@@ -27,51 +28,22 @@ class PetrolPrices
         $this->city = $city;
     }
 
-    /**
-     * @return float
-     */
-    public function getPb95(): float
-    {
-        return $this->pb95;
-    }
 
     /**
-     * @param $pb95
+     * @return array
      */
-    public function setPb95($pb95): void
+    public function getFuels(): array
     {
-        $this->pb95 = $pb95;
+        return $this->fuels;
     }
 
-    /**
-     * @return float
-     */
-    public function getPb98(): float
-    {
-        return $this->pb98;
-    }
 
     /**
-     * @param $pb98
+     * @param $name
+     * @param $price
      */
-    public function setPb98($pb98): void
+    public function setFuel($name, $price): void
     {
-        $this->pb98 = $pb98;
-    }
-
-    /**
-     * @return float
-     */
-    public function getOn(): float
-    {
-        return $this->on;
-    }
-
-    /**
-     * @param $on
-     */
-    public function setOn($on): void
-    {
-        $this->on = $on;
+        $this->fuels []= [$name => $price];
     }
 }
