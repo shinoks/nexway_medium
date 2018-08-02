@@ -59,4 +59,15 @@ class ImportPricesTest extends TestCase
             $this->assertTrue($dataTest['Sosnowiec'] == $decoded['Sosnowiec']);
         }
     }
+
+    public function testHtmlDecoder()
+    {
+        $dataTest = $this::DATA;
+        $import = new ImportPrices();
+        $data = file_get_contents('tests/sample/test.html');
+        $decoded = $import->htmlDecoder($data);
+
+        $this->assertTrue($dataTest['Katowice'] == $decoded['Katowice']);
+        $this->assertTrue($dataTest['Sosnowiec'] == $decoded['Sosnowiec']);
+    }
 }

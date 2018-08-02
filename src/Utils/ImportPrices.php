@@ -1,6 +1,7 @@
 <?php
 namespace App\Utils;
 
+use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Serializer\Encoder\XmlEncoder;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
@@ -168,6 +169,47 @@ class ImportPrices
     {
         $encoder = new XmlEncoder();
         $encoded = $encoder->decode($data,[]);
+
+        return $encoded;
+    }
+
+    public function htmlDecoder($data): array
+    {
+        $crawler = new Crawler($data);
+        $a =$crawler->filter("#petrol-prices > tr");
+        $parsed = $a->each(
+            function (Crawler $a){
+                $t = $a->filter('td');
+                $pp = $t->each(
+                    function (Crawler $t){
+                        $p = $t->text();
+
+                        return $p;
+                    }
+                );
+
+                return $pp;
+            }
+        );
+        $encoded = [];
+        $fuels = [];
+        $i = 0;
+        foreach($parsed as $row){
+            if($i == 0){
+                $fuels = $row;
+            }else {
+                $e = [];
+                $c = 0;
+                foreach($row as $r){
+                    if($c != 0){
+                        $e [$fuels[$c]]= $r;
+                    }
+                    $c = $c+1;
+                }
+                $encoded [$row[0]]= $e;
+            }
+            $i = $i+1;
+        }
 
         return $encoded;
     }
