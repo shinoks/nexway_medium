@@ -1,0 +1,20 @@
+{% if decoded_file is defined %}
+    <table>
+        {% for cities in decoded_file %}
+            {% for city,fuels in cities %}
+                <tr>
+                    <td>{{ city }}</td>
+                    {% for fuelName,price in fuels %}
+                        <td>{{ fuelName }} </td>
+                        <td>{{ price }} </td>
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+        {% endfor %}
+    </table>
+{% endif %}
+
+
+{{ form_start(form) }}
+{{ form_widget(form) }}
+{{ form_end(form) }}
