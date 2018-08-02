@@ -104,7 +104,7 @@ class ImportPrices
      * @param $extension
      * @return array
      */
-    private function fileParser($data, $extension): array
+    public function fileParser($data, $extension): array
     {
         $parsed = [];
         switch($extension){
@@ -126,7 +126,7 @@ class ImportPrices
      * @param $data
      * @return array
      */
-    private function jsonDecoder($data): array
+    public function jsonDecoder($data): array
     {
         $encoder = new JsonEncoder();
         $encoded = $encoder->decode($data,[]);
@@ -138,7 +138,7 @@ class ImportPrices
      * @param $data
      * @return array
      */
-    private function csvDecoder($data): array
+    public function csvDecoder($data): array
     {
         $encoder = new CsvEncoder();
         $encoded = $encoder->decode($data,[]);
@@ -151,7 +151,7 @@ class ImportPrices
                 if($k == 'city' || $k == ''){
                     $city = $r;
                 }else{
-                    $fuels [$k]= $r;
+                    $fuels [$k]= number_format($r,2);
                 }
                 $parse [$city]= $fuels;
             }
@@ -164,7 +164,7 @@ class ImportPrices
      * @param $data
      * @return array
      */
-    private function xmlDecoder($data): array
+    public function xmlDecoder($data): array
     {
         $encoder = new XmlEncoder();
         $encoded = $encoder->decode($data,[]);
