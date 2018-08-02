@@ -47,11 +47,11 @@ class ImportPrices
     }
 
     /**
-     * @param $location
-     * @param $name
+     * @param string $location
+     * @param string $name
      * @return bool
      */
-    private function unzip($location, $name): bool
+    private function unzip(string $location, string $name): bool
     {
         if(exec("unzip $location -d $name",$arr)){
 
@@ -63,11 +63,11 @@ class ImportPrices
     }
 
     /**
-     * @param $location
-     * @param $name
+     * @param string $location
+     * @param string $name
      * @return bool
      */
-    private function unrar($location, $name): bool
+    private function unrar(string $location, string $name): bool
     {
         $filesystem = new Filesystem();
         if(!$filesystem->exists($name)){
@@ -84,10 +84,10 @@ class ImportPrices
     }
 
     /**
-     * @param $fileName
+     * @param string $fileName
      * @return array
      */
-    private function getParseFilesFromDir($fileName): array
+    private function getParseFilesFromDir(string $fileName): array
     {
         $parsedData = [];
         $finder = new Finder();
@@ -101,11 +101,11 @@ class ImportPrices
     }
 
     /**
-     * @param $data
-     * @param $extension
+     * @param string $data
+     * @param string $extension
      * @return array
      */
-    public function fileParser($data, $extension): array
+    public function fileParser(string $data, string $extension): array
     {
         $parsed = [];
         switch($extension){
@@ -118,16 +118,19 @@ class ImportPrices
             case 'xml':
                 $parsed = $this->xmlDecoder($data);
             break;
+            case 'html':
+                $parsed = $this->htmlDecoder($data);
+            break;
         }
 
         return $parsed;
     }
 
     /**
-     * @param $data
+     * @param string $data
      * @return array
      */
-    public function jsonDecoder($data): array
+    public function jsonDecoder(string $data): array
     {
         $encoder = new JsonEncoder();
         $encoded = $encoder->decode($data,[]);
@@ -136,10 +139,10 @@ class ImportPrices
     }
 
     /**
-     * @param $data
+     * @param string $data
      * @return array
      */
-    public function csvDecoder($data): array
+    public function csvDecoder(string $data): array
     {
         $encoder = new CsvEncoder();
         $encoded = $encoder->decode($data,[]);
@@ -162,10 +165,10 @@ class ImportPrices
     }
 
     /**
-     * @param $data
+     * @param string $data
      * @return array
      */
-    public function xmlDecoder($data): array
+    public function xmlDecoder(string $data): array
     {
         $encoder = new XmlEncoder();
         $encoded = $encoder->decode($data,[]);
@@ -173,7 +176,11 @@ class ImportPrices
         return $encoded;
     }
 
-    public function htmlDecoder($data): array
+    /**
+     * @param string $data
+     * @return array
+     */
+    public function htmlDecoder(string $data): array
     {
         $crawler = new Crawler($data);
         $a =$crawler->filter("#petrol-prices > tr");
