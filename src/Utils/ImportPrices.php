@@ -220,4 +220,32 @@ class ImportPrices
 
         return $encoded;
     }
+
+    /**
+     * Returns decoded database array
+     * @param array $data
+     * @return array
+     */
+    public function dbDecoder(array $data): array
+    {
+        $ar = [];
+        foreach($data as $r){
+            $f = [];
+            $i = 0;
+            foreach($r as $a){
+                if($i === 0){
+                    $city = $a;
+                }elseif($i === 1) {
+                    $fuel = $a;
+                }elseif($i === 2) {
+                    $price = $a;
+                }
+                $i = $i+1;
+            }
+            $ar[$city] [$fuel]= $price;
+        }
+        $encoded = [$ar];
+
+        return $encoded;
+    }
 }
