@@ -7,6 +7,10 @@ Lib decodes :
 - csv
 - xml
 - html
+- from db table
+
+App\Utils\ImportPrices 
+->import(File $file)
 
 to simple array ready to use:
 
