@@ -1,6 +1,3 @@
-import_prices:
-    path: /
-    controller: App\Controller\ImporterController::index
 import_page:
-    path: /import
+    path: /
     controller: App\Controller\ImporterController::importPage
