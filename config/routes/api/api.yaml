@@ -1,0 +1,3 @@
+api_v1:
+    resource: "v1/api.yaml"
+    prefix: /v1

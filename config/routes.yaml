@@ -1,3 +1,6 @@
 import_page:
     path: /
     controller: App\Controller\ImporterController::importPage
+api:
+    resource: "routes/api/api.yaml"
+    prefix: /api

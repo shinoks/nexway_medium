@@ -1,0 +1,8 @@
+decode_file:
+    path: /decode_file
+    methods: [POST]
+    controller: App\Controller\ImportApiController::decodeFile
+prices:
+    path: /prices
+    methods: [GET]
+    controller: App\Controller\ImportApiController::getPrices
