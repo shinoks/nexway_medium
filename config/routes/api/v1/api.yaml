@@ -2,6 +2,15 @@ decode_file:
     path: /decode_file
     methods: [POST]
     controller: App\Controller\ImportApiController::decodeFile
+
+prices_by_city:
+    path: /prices/city/{city}
+    methods: [GET]
+    controller: App\Controller\ImportApiController::getPricesByCity
+prices_by_fuel:
+    path: /prices/fuel/{fuel}
+    methods: [GET]
+    controller: App\Controller\ImportApiController::getPricesByFuel
 prices:
     path: /prices
     methods: [GET]

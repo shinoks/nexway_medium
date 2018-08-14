@@ -27,7 +27,7 @@ class FuelPrices
     private $fuelName;
 
     /**
-     * @ORM\Column(type="decimal")
+     * @ORM\Column(type="decimal", precision=10, scale=2)
      */
     private $price;
 
@@ -75,9 +75,9 @@ class FuelPrices
     }
 
     /**
-     * @return string
+     * @return decimal
      */
-    public function getPrice(): string
+    public function getPrice()
     {
         return $this->price;
     }
